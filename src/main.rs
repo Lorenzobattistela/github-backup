@@ -12,6 +12,11 @@ struct Repository {
     default_branch: String,
 }
 
+#[derive(Debug, Deserialize)]
+struct Owner {
+    login: String,
+}
+
 fn get_api_token() -> String {
     dotenv().ok();
     let api_token = env::var("GITHUB_AUTH_KEY").expect("$GITHUB_AUTH_KEY is not set");
