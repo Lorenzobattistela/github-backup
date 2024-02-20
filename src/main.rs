@@ -51,3 +51,26 @@ async fn get_owner_repos() -> Result<Vec<Repository>, Box<dyn std::error::Error>
     let filtered_repos = filter_logins(repositories);
     Ok(filtered_repos)
 }
+
+async fn get_zipped_repo(repository: &Repository) -> Result<Bytes, Box<dyn std::error::Error>> {
+    let api_token = get_api_token();
+    let client = get_client();
+
+    let url = format!(
+        "https://api.github.com/repos/{owner}/{repo}/zipball/{default_branch}",
+        owner = repository.owner.login,
+        repo = repository.name,
+        default_branch = repository.default_branch
+    );
+
+    let res = client
+        .get(url)
+        .header("Authorization", format!("Bearer {}", api_token))
+        .header("Accept", "application/vnd.github+json")
+        .header(USER_AGENT, "Lorenzobattistela")
+        .header("X-GitHub-Api-Version", "2022-11-28")
+        .send()
+        .await?;
+    let bytes = res.bytes().await?;
+    Ok::<Bytes, Box<dyn std::error::Error>>(bytes)
+}
