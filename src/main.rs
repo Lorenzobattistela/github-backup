@@ -1,6 +1,10 @@
 use dotenv::dotenv;
+use indicatif::ProgressBar;
 use reqwest::header::USER_AGENT;
+use serde::Deserialize;
 use std::env;
+use tokio::fs::File;
+use tokio::io::AsyncWriteExt;
 
 #[derive(Debug, Deserialize)]
 struct Repository {
