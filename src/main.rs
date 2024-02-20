@@ -91,3 +91,14 @@ async fn get_zipped_repo(
     Ok::<ZippedRepository, Box<dyn std::error::Error>>(zipped_repo)
 }
 
+async fn create_zip_file(
+    zip_name: &str,
+    zip: Vec<u8>,
+    output_path: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let saving_path = format!("{}/{}.zip", output_path, zip_name);
+    let mut file = File::create(&saving_path).await?;
+    file.write_all(&zip).await?;
+    println!("Saved zip at {}", saving_path);
+    Ok(())
+}
