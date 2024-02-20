@@ -62,7 +62,9 @@ async fn get_owner_repos() -> Result<Vec<Repository>, Box<dyn std::error::Error>
     Ok(filtered_repos)
 }
 
-async fn get_zipped_repo(repository: &Repository) -> Result<Bytes, Box<dyn std::error::Error>> {
+async fn get_zipped_repo(
+    repository: &Repository,
+) -> Result<ZippedRepository, Box<dyn std::error::Error>> {
     let api_token = get_api_token();
     let client = get_client();
 
@@ -81,6 +83,11 @@ async fn get_zipped_repo(repository: &Repository) -> Result<Bytes, Box<dyn std::
         .header("X-GitHub-Api-Version", "2022-11-28")
         .send()
         .await?;
-    let bytes = res.bytes().await?;
-    Ok::<Bytes, Box<dyn std::error::Error>>(bytes)
+
+    let zip_bytes = res.bytes().await?;
+    let zip = zip_bytes.to_vec();
+    let name = repository.name.clone();
+    let zipped_repo = ZippedRepository { name, zip };
+    Ok::<ZippedRepository, Box<dyn std::error::Error>>(zipped_repo)
 }
+
