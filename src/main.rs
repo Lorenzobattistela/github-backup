@@ -14,6 +14,11 @@ struct Owner {
     login: String,
 }
 
+struct ZippedRepository {
+    name: String,
+    zip: Vec<u8>,
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let repos: Vec<Repository> = get_owner_repos().await?;
