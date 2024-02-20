@@ -26,8 +26,31 @@ struct ZippedRepository {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let repos: Vec<Repository> = get_owner_repos().await?;
-    let first_repo = &repos[0];
-    get_zipped_repo(first_repo).await?;
+    let len_repos: u64 = repos.len() as u64;
+    let mut error_counts = 0;
+
+    let pb = ProgressBar::new(len_repos);
+
+    for repo in repos.iter() {
+        let zipped_repo: ZippedRepository = get_zipped_repo(repo).await?;
+        let created = create_zip_file(&zipped_repo.name, zipped_repo.zip, "./backups").await;
+        match created {
+            Ok(_) => {
+                pb.inc(1);
+            }
+            Err(e) => {
+                println!("Error downloading repo: {}. Err: {}", zipped_repo.name, e);
+                error_counts += 1;
+            }
+        }
+    }
+    let downloaded_repos = len_repos - error_counts;
+    let message = format!(
+        "Downloaded {} repositories and saved them. Could not download {} repositories.",
+        downloaded_repos, error_counts
+    );
+    pb.finish_with_message(message);
+
     Ok(())
 }
 
