@@ -17,6 +17,14 @@ struct Owner {
     login: String,
 }
 
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let repos: Vec<Repository> = get_owner_repos().await?;
+    let first_repo = &repos[0];
+    get_zipped_repo(first_repo).await?;
+    Ok(())
+}
+
 fn get_api_token() -> String {
     dotenv().ok();
     let api_token = env::var("GITHUB_AUTH_KEY").expect("$GITHUB_AUTH_KEY is not set");
