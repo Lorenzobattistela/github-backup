@@ -1,9 +1,6 @@
 use dotenv::dotenv;
 use reqwest::header::USER_AGENT;
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::env;
-use bytes::Bytes;
 
 #[derive(Debug, Deserialize)]
 struct Repository {
