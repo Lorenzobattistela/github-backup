@@ -27,6 +27,13 @@ fn get_client() -> reqwest::Client {
     return reqwest::Client::new();
 }
 
+fn filter_logins(repositories: Vec<Repository>) -> Vec<Repository> {
+    repositories
+        .into_iter()
+        .filter(|repo| repo.owner.login == "Lorenzobattistela")
+        .collect()
+}
+
 async fn get_owner_repos() -> Result<Vec<Repository>, Box<dyn std::error::Error>> {
     let api_token = get_api_token();
     let client = get_client();
